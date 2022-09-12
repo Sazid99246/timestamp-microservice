@@ -18,35 +18,30 @@ app.get("/", function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
 
-// get date and its details
-app.get('/api/:date', (req, res) => {
-  let date;
-  if(isNaN(Number(req.params.date))){
-    date = new Date(req.params.date);
-  } else{
-    date = new Date(parseInt(req.params.date))
-  }
-  if(!isNaN(Number(req.params.date))){
-    res.json({
-      error: "Invalid Date"
-    })
-  }
-  const utcValue = date.toUTCString();
-  const unixValue = date.getTime();
+app.get('/api', (req, res) => {
   res.json({
-    unix: unixValue,
-    utc: utcValue
+    unix: new Date().getTime(),
+    utc: new Date().toUTCString()
   })
 })
 
-// get current date
-app.get('/api', (req, res) => {
-  const date = new Date();
-  const unix = date.getTime();
-  const utc = date.toUTCString();
+app.get('/api/:timestamp', (req, res) => {
+  const timestamp = req.params.timestamp;
+
+  if (!isNaN(Number(timestamp)) && timestamp.length === 13) {
+    res.json({
+      unix: timestamp,
+      utc: new Date(Number(timestamp)).toUTCString()
+    })
+  }
+  if (new Date(timestamp).toUTCString !== "Invalid Date") {
+    res.json({
+      unix: new Date(timestamp).getTime(),
+      utc: new Date(timestamp).toUTCString()
+    })
+  }
   res.json({
-    unix: unix,
-    utc: utc
+    error: "Invalid Date"
   })
 })
 
