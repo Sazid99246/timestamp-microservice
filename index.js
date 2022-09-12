@@ -18,16 +18,23 @@ app.get("/", function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
 
+// get date and its details
 app.get('/api/:date', (req, res) => {
-  const date = new Date(req.params.date);
-  const timeStampinMs = date.getTime();
-  const utc = date.toUTCString();
+  let date;
+  if(isNaN(Number(req.params.date))){
+    date = req.params.date;
+  } else{
+    date = new Date(parseInt(req.params.date))
+  }
+  const utcValue = date.toUTCString();
+  const unixValue = date.getTime();
   res.json({
-    unix: timeStampinMs,
-    utc: utc
+    unix: unixValue,
+    utc: utcValue
   })
 })
 
+// get current date
 app.get('/api', (req, res) => {
   const date = new Date();
   const timeStampinMs = date.getTime();
@@ -42,8 +49,6 @@ app.get('/api', (req, res) => {
 app.get("/api/hello", function (req, res) {
   res.json({ greeting: 'hello API' });
 });
-
-
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT || 5000, function () {
