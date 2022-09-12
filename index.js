@@ -25,25 +25,24 @@ app.get('/api', (req, res) => {
   })
 })
 
-app.get('/api/:timestamp', (req, res) => {
-  const timestamp = req.params.timestamp;
+app.get("/api/:id", async (req, res) => {
+  var { id } = req.params
+  if (!isNaN(id)) {
+    var data = new Date(Number(id))
+    if (data === undefined || data === null || data == "Invalid Date") {
+      return res.json({ error: "Invalid Date" })
+    }
 
-  if (!isNaN(Number(timestamp)) && timestamp.length === 13) {
-    res.json({
-      unix: timestamp,
-      utc: new Date(Number(timestamp)).toUTCString()
-    })
+    return res.json({ unix: data.getTime(), utc: data.toUTCString() });
   }
-  if (new Date(timestamp).toUTCString !== "Invalid Date") {
-    res.json({
-      unix: new Date(timestamp).getTime(),
-      utc: new Date(timestamp).toUTCString()
-    })
+  var data = new Date(id)
+  if (data === undefined || data === null || data == "Invalid Date") {
+    return res.json({ error: "Invalid Date" })
   }
-  res.json({
-    error: "Invalid Date"
-  })
-})
+
+  return res.json({ unix: data.getTime(), utc: data.toUTCString() });
+
+});
 
 // your first API endpoint... 
 app.get("/api/hello", function (req, res) {
